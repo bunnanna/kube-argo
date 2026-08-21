@@ -115,15 +115,26 @@ spec:
     spec:
       serviceAccountName: vault-bootstrap
       restartPolicy: Never
+      initContainers:
+        - name: vault-bin
+          image: hashicorp/vault:1.17
+          command: ["cp", "/bin/vault", "/tools/vault"]
+          volumeMounts:
+            - name: tools
+              mountPath: /tools
       containers:
         - name: bootstrap
-          image: hashicorp/vault:1.17
-          command: ["/bin/sh", "/scripts/bootstrap.sh"]
+          image: alpine/k8s:1.30.2
+          command: ["/bin/sh", "-c", "apk add --no-cache jq >/dev/null && PATH=/tools:$PATH /bin/sh /scripts/bootstrap.sh"]
           volumeMounts:
             - name: script
               mountPath: /scripts
+            - name: tools
+              mountPath: /tools
       volumes:
         - name: script
           configMap:
             name: vault-bootstrap-script
             defaultMode: 0755
+        - name: tools
+          emptyDir: {}
