@@ -11,6 +11,30 @@ spec:
       kubernetes:
         role: cert-manager
         mountPath: /v1/auth/kubernetes
-        secretRef:
-          name: cert-manager-vault-sa-token
-          key: token
+        serviceAccountRef:
+          name: cert-manager
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cert-manager-token-request
+  namespace: cert-manager
+rules:
+  - apiGroups: [""]
+    resources: ["serviceaccounts/token"]
+    resourceNames: ["cert-manager"]
+    verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cert-manager-token-request
+  namespace: cert-manager
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cert-manager-token-request
+subjects:
+  - kind: ServiceAccount
+    name: cert-manager
+    namespace: cert-manager
