@@ -11,7 +11,7 @@ spec:
       repoURL: https://github.com/bunnanna/kube-argo.git
       revision: main
       files:
-      - path: "common/cert-manager/cert/*.yaml"
+      - path: "cert/*.yaml"
   template:
     metadata:
       name: '{{.metadata.name}}'
