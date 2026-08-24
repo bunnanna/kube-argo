@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/bunnanna/kube-argo.git
     targetRevision: main
-    path: argocd/install
+    path: common/argocd/install
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
