@@ -3,5 +3,10 @@ kind: Kustomization
 namespace: argocd
 resources:
   - https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-patchesStrategicMerge:
-  - configmap.yaml
+patches:
+  - path: configmap.yaml
+    target:
+      group: ""
+      version: v1
+      kind: ConfigMap
+      name: argocd-cmd-params-cm
