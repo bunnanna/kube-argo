@@ -1,0 +1,4 @@
+chart: vault-secrets-operator
+repoURL: https://helm.releases.hashicorp.com
+targetRevision: "1.5.1"
+namespace: vault-secrets-operator
