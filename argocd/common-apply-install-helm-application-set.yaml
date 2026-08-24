@@ -1,16 +1,12 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: common-apply-install
+  name: common-apply-install-helm
   namespace: argocd
 spec:
   goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
   generators:
-  - git:
-      repoURL: https://github.com/bunnanna/kube-argo.git
-      revision: main
-      files:
-      - path: "common/*/install/kustomization.yaml"
   - git:
       repoURL: https://github.com/bunnanna/kube-argo.git
       revision: main
@@ -22,7 +18,6 @@ spec:
     spec:
       project: default
       sources:
-      {{- if .chart }}
       - repoURL: '{{.repoURL}}'
         chart: '{{.chart}}'
         targetRevision: '{{.targetRevision}}'
@@ -32,11 +27,6 @@ spec:
       - repoURL: https://github.com/bunnanna/kube-argo.git
         targetRevision: main
         ref: values
-      {{- else }}
-      - repoURL: https://github.com/bunnanna/kube-argo.git
-        targetRevision: main
-        path: '{{.path.path}}'
-      {{- end }}
       destination:
         server: https://kubernetes.default.svc
         namespace: '{{.namespace}}'

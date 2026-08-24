@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: common-apply
+  name: common-apply-install-kustomize
   namespace: argocd
 spec:
   goTemplate: true
@@ -11,20 +11,19 @@ spec:
       repoURL: https://github.com/bunnanna/kube-argo.git
       revision: main
       files:
-      - path: "common/*/*.yaml"
-      - path: "common/*/install/**"
-        exclude: true
+      - path: "common/*/install/kustomization.yaml"
   template:
     metadata:
-      name: '{{.metadata.name}}'
+      name: '{{index .path.segments 1}}'
     spec:
       project: default
-      sources:
-      - repoURL: https://github.com/bunnanna/kube-argo.git
+      source:
+        repoURL: https://github.com/bunnanna/kube-argo.git
+        targetRevision: main
         path: '{{.path.path}}'
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{.metadata.namespace}}'
+        namespace: '{{.namespace}}'
       syncPolicy:
         automated:
           prune: true

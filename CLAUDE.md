@@ -23,14 +23,15 @@ Kong ingress.
   `argocd/`:
   - **Install-based component**: `install/` holds either `helm.yaml` (chart, repoURL,
     targetRevision, namespace) + `values.yaml`, or a plain Kustomize `kustomization.yaml` (+
-    whatever it patches, e.g. `configmap.yaml`). Both shapes are picked up by
-    `common-apply-install-application-set.yaml`, which unions two git generators — one
-    matching `common/*/install/helm.yaml`, one matching `common/*/install/kustomization.yaml`
-    — into a single Application per component: `helm.yaml` items render as a Helm multi-source
-    Application (same `ref: values` pattern as before), `kustomization.yaml` items render as a
-    plain path-based source. The Application's `name` is the component dir name
-    (`{{index .path.segments 1}}`) and its destination `namespace` is read straight from the
-    `namespace:` field of whichever file matched.
+    whatever it patches, e.g. `configmap.yaml`). These are two separate ApplicationSets — an
+    ApplicationSet's `spec.template` is a typed object, not text, so it can't structurally
+    branch between a Helm multi-source shape and a plain path-source shape in one template:
+    `common-apply-install-helm-application-set.yaml` matches `common/*/install/helm.yaml` and
+    renders the Helm multi-source Application (`ref: values` pattern);
+    `common-apply-install-kustomize-application-set.yaml` matches
+    `common/*/install/kustomization.yaml` and renders a plain path-based source. Both name the
+    Application after the component dir (`{{index .path.segments 1}}`) and read the
+    destination `namespace` straight from the `namespace:` field of whichever file matched.
   - **Plain-manifest component**: any other `*.yaml` directly under `common/<name>/` (e.g.
     `ingress.yaml`), picked up by `common-apply-application-set.yaml`, which applies the file
     at that path directly as an Application source. `common/*/install/**` is explicitly
@@ -64,10 +65,11 @@ tracked files.
   ApplicationSet templates — individual manifests don't need `Namespace` objects.
 - All Applications point at `destination.server: https://kubernetes.default.svc` (in-cluster
   only, no multi-cluster).
-- `argocd-self-manage-app.yaml` and `common-apply`/`common-apply-install`/`issue-cert`
+- `argocd-self-manage-app.yaml` and
+  `common-apply`/`common-apply-install-helm`/`common-apply-install-kustomize`/`issue-cert`
   ApplicationSets are how the repo bootstraps itself — the `path: argocd` Application
   (self-apply) keeps ArgoCD in sync with changes to `argocd/*.yaml` itself. ArgoCD's own
   install manifests (`common/argocd/install/`) are now also just another
-  `common-apply-install` entry, no longer a separate hand-applied Application — mind that its
-  `syncPolicy` (`prune: true`, `ServerSideApply=true`) is now shared with every other
-  install-based component instead of being tuned on its own.
+  `common-apply-install-kustomize` entry, no longer a separate hand-applied Application — mind
+  that its `syncPolicy` (`prune: true`, `ServerSideApply=true`) is now shared with every other
+  kustomize-based component instead of being tuned on its own.
