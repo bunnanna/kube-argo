@@ -1,0 +1,4 @@
+chart: kong
+repoURL: https://charts.konghq.com
+targetRevision: "3.4.1"
+namespace: kong

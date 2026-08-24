@@ -1,0 +1,7 @@
+ingressController:
+  enabled: true
+  installCRDs: false
+proxy:
+  type: LoadBalancer
+admin:
+  enabled: false
