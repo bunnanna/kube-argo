@@ -16,6 +16,8 @@ spec:
         exclude: true
       - path: "common/*/values.yaml"
         exclude: true
+      - path: "common/*/install/**"
+        exclude: true
   template:
     metadata:
       name: '{{.metadata.name}}'
