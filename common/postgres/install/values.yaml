@@ -1,0 +1,4 @@
+auth:
+  existingSecret: postgresql-creds
+  secretKeys:
+    adminPasswordKey: postgres-password
