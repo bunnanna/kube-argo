@@ -12,10 +12,6 @@ spec:
       revision: main
       files:
       - path: "common/*/*.yaml"
-      - path: "common/*/helm.yaml"
-        exclude: true
-      - path: "common/*/values.yaml"
-        exclude: true
       - path: "common/*/install/**"
         exclude: true
   template:
