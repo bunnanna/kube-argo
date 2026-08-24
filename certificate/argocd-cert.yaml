@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: argocd-cert
+  namespace: argocd
+spec:
+  secretName: argocd-cert-tls
+  issuerRef:
+    name: vault-issuer
+    kind: ClusterIssuer
+  commonName: argocd.bunnana.dev
+  dnsNames:
+  - argocd.bunnana.dev
