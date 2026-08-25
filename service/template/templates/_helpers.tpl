@@ -1,3 +1,3 @@
 {{- define "service.fullname" -}}
-{{ .Values.project }}-{{ .Values.service }}
+{{ .Values.service }}
 {{- end -}}
