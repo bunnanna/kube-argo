@@ -7,7 +7,7 @@ port: 8080
 
 image:
   repository: bunnana/bank-demo/customer-service
-  tag: "0.0.2"
+  tag: "0.0.3"
   pullPolicy: Never
 
 vault:
@@ -17,6 +17,8 @@ vault:
     path: static-creds/bank-demo-customer-service
 
 env:
+- name: POSTGRES_HOST
+  value: postgres-postgresql.postgres.svc:5432
 - name: POSTGRES_DB
   value: bank_demo_customer_db
 - name: POSTGRES_USER
