@@ -20,6 +20,15 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.port }}
-          envFrom:
-            - secretRef:
-                name: {{ include "service.fullname" . }}-db-creds
+          env:
+          {{- range .Values.env }}
+            - name: {{ .name }}
+              {{- if hasKey . "value" }}
+              value: {{ .value | quote }}
+              {{- else }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "service.fullname" $ }}-{{ .secretName }}
+                  key: {{ .secretKey }}
+              {{- end }}
+          {{- end }}

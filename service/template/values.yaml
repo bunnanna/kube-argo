@@ -10,6 +10,34 @@ image:
   tag: "latest"
   pullPolicy: IfNotPresent
 
+# Any number of Vault-synced secrets, any engine (database static-creds, mongo
+# static-creds, kv, ...). Each becomes one VaultStaticSecret + one k8s Secret
+# named <fullname>-<name>, rotated on refreshAfter, rolling-restarting this
+# Deployment when it changes.
+vault:
+  refreshAfter: "1h"
+  secrets: []
+  # secrets:
+  # - name: db-creds              # -> Secret <fullname>-db-creds
+  #   mount: database
+  #   path: static-creds/<fullname>
+  # - name: mongo-creds           # -> Secret <fullname>-mongo-creds
+  #   mount: mongo
+  #   path: static-creds/<fullname>-mongo
+
+# Container env vars. `value` for plain config, or `secretName`+`secretKey` to
+# pull from one of the vault.secrets entries above (secretName = its `name`).
+env: []
+# env:
+# - name: POSTGRES_DB
+#   value: bank_demo_customer_db
+# - name: POSTGRES_USER
+#   secretName: db-creds
+#   secretKey: username
+# - name: POSTGRES_PASSWORD
+#   secretName: db-creds
+#   secretKey: password
+
 ingress:
   enabled: false
   hosts: []
@@ -19,6 +47,3 @@ ingress:
   #   paths:
   #   - path: /customer-service
   #     pathType: Prefix
-
-vault:
-  refreshAfter: "1h"
