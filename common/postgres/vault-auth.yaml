@@ -1,0 +1,44 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: postgres-vault-auth
+  namespace: postgres
+spec:
+  method: kubernetes
+  mount: kubernetes
+  kubernetes:
+    role: postgres-vso
+    serviceAccount: postgres-vso
+    audiences:
+      - vault
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: postgres-vso
+  namespace: postgres
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: postgres-vso-token-request
+  namespace: postgres
+rules:
+  - apiGroups: [""]
+    resources: ["serviceaccounts/token"]
+    resourceNames: ["postgres-vso"]
+    verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: postgres-vso-token-request
+  namespace: postgres
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: postgres-vso-token-request
+subjects:
+  - kind: ServiceAccount
+    name: postgres-vso
+    namespace: postgres
