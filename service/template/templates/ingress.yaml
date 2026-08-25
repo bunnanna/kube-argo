@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "service.fullname" . }}-ingress
+  name: {{ include "service.name" . }}-ingress
   namespace: {{ .Values.namespace }}
 spec:
   ingressClassName: kong
@@ -22,7 +22,7 @@ spec:
         pathType: {{ .pathType | default "Prefix" }}
         backend:
           service:
-            name: {{ include "service.fullname" $ }}
+            name: {{ include "service.name" $ }}
             port:
               number: {{ $.Values.port }}
       {{- end }}

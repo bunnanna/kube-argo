@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "service.fullname" . }}
+  name: {{ include "service.name" . }}
   namespace: {{ .Values.namespace }}
 spec:
   replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
-      app: {{ include "service.fullname" . }}
+      app: {{ include "service.name" . }}
   template:
     metadata:
       labels:
-        app: {{ include "service.fullname" . }}
+        app: {{ include "service.name" . }}
     spec:
       serviceAccountName: {{ include "service.fullname" . }}-vso
       containers:
-        - name: {{ .Values.service }}
+        - name: {{ include "service.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
