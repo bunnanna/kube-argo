@@ -2,7 +2,7 @@ project: bank-demo
 service: customer-service
 namespace: bank-demo
 
-replicas: 3
+replicas: 1
 port: 8080
 
 image:
