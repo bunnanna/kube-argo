@@ -11,8 +11,7 @@ image:
   pullPolicy: Never
 
 vault:
-  refreshAfter: "1h"
-  secrets:
+  dynamicSecrets:
   - name: db-creds
     mount: database
     path: static-creds/bank-demo-customer-service

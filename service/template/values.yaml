@@ -10,23 +10,36 @@ image:
   tag: "latest"
   pullPolicy: IfNotPresent
 
-# Any number of Vault-synced secrets, any engine (database static-creds, mongo
-# static-creds, kv, ...). Each becomes one VaultStaticSecret + one k8s Secret
-# named <fullname>-<name>, rotated on refreshAfter, rolling-restarting this
-# Deployment when it changes.
 vault:
-  refreshAfter: "1h"
-  secrets: []
-  # secrets:
+  # Database/mongo/etc engine credentials (static-creds or true dynamic creds).
+  # Each becomes one VaultDynamicSecret + one k8s Secret named <fullname>-<name>,
+  # resynced automatically on Vault's own rotation schedule, rolling-restarting
+  # this Deployment when it changes.
+  dynamicSecrets: []
+  # dynamicSecrets:
   # - name: db-creds              # -> Secret <fullname>-db-creds
   #   mount: database
   #   path: static-creds/<fullname>
+  #   staticCreds: true           # true = Vault-rotated static role (default);
+  #                                # false = per-request dynamic creds (own lease)
   # - name: mongo-creds           # -> Secret <fullname>-mongo-creds
   #   mount: mongo
   #   path: static-creds/<fullname>-mongo
 
+  # Plain KV secrets - different Vault engine, different CRD (VaultStaticSecret),
+  # polled on refreshAfter instead of resynced on rotation. Each becomes one
+  # k8s Secret named <fullname>-<name>.
+  kvSecrets: []
+  # kvSecrets:
+  # - name: api-config             # -> Secret <fullname>-api-config
+  #   mount: secret                # kv-v2 mount path
+  #   path: bank-demo/customer-service/api-config
+  #   version: kv-v2                # kv-v1 | kv-v2
+  #   refreshAfter: "1h"
+
 # Container env vars. `value` for plain config, or `secretName`+`secretKey` to
-# pull from one of the vault.secrets entries above (secretName = its `name`).
+# pull from one of the vault.dynamicSecrets/vault.kvSecrets entries above
+# (secretName = its `name` - must be unique across both lists).
 env: []
 # env:
 # - name: POSTGRES_DB
