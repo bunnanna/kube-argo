@@ -1,0 +1,43 @@
+project: bank-demo
+service: customer-service
+namespace: bank-demo
+
+replicas: 3
+port: 8080
+
+image:
+  repository: bunnana/bank-demo/customer-service
+  tag: "0.0.2"
+  pullPolicy: Never
+
+vault:
+  refreshAfter: "1h"
+  secrets:
+  - name: db-creds
+    mount: database
+    path: static-creds/bank-demo-customer-service
+
+env:
+- name: POSTGRES_DB
+  value: bank_demo_customer_db
+- name: POSTGRES_USER
+  secretName: db-creds
+  secretKey: username
+- name: POSTGRES_PASSWORD
+  secretName: db-creds
+  secretKey: password
+- name: JWT_JWK_SET_URI
+  value: http://customer-service/.well-known/jwks.json
+- name: VAULT_URI
+  value: http://vault.vault.svc:8200
+- name: VAULT_KUBERNETES_ROLE
+  value: bank-demo-customer-service-vso
+
+ingress:
+  enabled: true
+  hosts:
+  - host: bank-demo.bunnana.dev
+    tlsSecretName: bank-demo-cert-tls
+    paths:
+    - path: /customer-service
+      pathType: Prefix
