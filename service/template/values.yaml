@@ -1,0 +1,24 @@
+project: ""
+service: ""
+namespace: ""
+
+replicas: 1
+port: 8080
+
+image:
+  repository: ""
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+ingress:
+  enabled: false
+  hosts: []
+  # hosts:
+  # - host: bank-demo.bunnana.dev
+  #   tlsSecretName: bank-demo-cert-tls   # matches secretName of a certificate/<name>.yaml Certificate
+  #   paths:
+  #   - path: /customer-service
+  #     pathType: Prefix
+
+vault:
+  refreshAfter: "1h"

@@ -1,0 +1,44 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: {{ include "service.fullname" . }}-vault-auth
+  namespace: {{ .Values.namespace }}
+spec:
+  method: kubernetes
+  mount: kubernetes
+  kubernetes:
+    role: {{ include "service.fullname" . }}-vso
+    serviceAccount: {{ include "service.fullname" . }}-vso
+    audiences:
+      - vault
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "service.fullname" . }}-vso
+  namespace: {{ .Values.namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "service.fullname" . }}-vso-token-request
+  namespace: {{ .Values.namespace }}
+rules:
+  - apiGroups: [""]
+    resources: ["serviceaccounts/token"]
+    resourceNames: ["{{ include "service.fullname" . }}-vso"]
+    verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "service.fullname" . }}-vso-token-request
+  namespace: {{ .Values.namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "service.fullname" . }}-vso-token-request
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "service.fullname" . }}-vso
+    namespace: {{ .Values.namespace }}
