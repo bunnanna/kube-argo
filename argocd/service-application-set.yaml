@@ -25,7 +25,7 @@ spec:
         path: service/template
         helm:
           valueFiles:
-          - $values/{{.path.path}}
+          - $values/{{.path.path}}/values.yaml
       - repoURL: https://github.com/bunnanna/kube-argo.git
         targetRevision: main
         ref: values
