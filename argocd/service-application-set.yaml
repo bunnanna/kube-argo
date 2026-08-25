@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: service-apply
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+  - git:
+      repoURL: https://github.com/bunnanna/kube-argo.git
+      revision: main
+      files:
+      - path: "service/*/*/values.yaml"
+  template:
+    metadata:
+      name: '{{index .path.segments 1}}-{{index .path.segments 2}}'
+    spec:
+      project: default
+      sources:
+      - repoURL: https://github.com/bunnanna/kube-argo.git
+        targetRevision: main
+        path: service/template
+        helm:
+          valueFiles:
+          - $values/{{.path.path}}
+      - repoURL: https://github.com/bunnanna/kube-argo.git
+        targetRevision: main
+        ref: values
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true
+        - ServerSideApply=true
