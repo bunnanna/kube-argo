@@ -1,0 +1,14 @@
+tempo:
+  storage:
+    trace:
+      backend: local
+      local:
+        path: /var/tempo/traces
+
+persistence:
+  enabled: true
+  storageClassName: local-path
+  size: 10Gi
+
+serviceMonitor:
+  enabled: false
