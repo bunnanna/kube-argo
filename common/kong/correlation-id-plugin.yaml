@@ -1,7 +1,7 @@
 apiVersion: configuration.konghq.com/v1
 kind: KongClusterPlugin
 metadata:
-  name: correlation-id
+  name: kong-correlation-id
   labels:
     global: "true"
 plugin: correlation-id
