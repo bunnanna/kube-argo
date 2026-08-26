@@ -39,12 +39,24 @@ Kong ingress.
 - `certificate/*.yaml` — `cert-manager.io/v1 Certificate` objects, one per issued cert.
   Auto-discovered by `argocd/issue-certificate.yaml`'s ApplicationSet (glob
   `certificate/*.yaml`), one Application per file.
+- `service/<project>/<service>/values.yaml` — one values file per deployed app service.
+  Auto-discovered by `argocd/service-application-set.yaml` (glob `service/*/*/values.yaml`,
+  with `service/*/template/**` excluded). Every match renders one Application named
+  `<project>-<service>` that sources the shared chart at `service/template` (a generic
+  Deployment + Service + Ingress + Vault-synced secrets chart, `service/template/Chart.yaml`)
+  with that `values.yaml` layered on top via the multi-source `ref: values` pattern.
+  `values.yaml` sets `project`/`service`/`namespace`, image, env vars (plain `value` or
+  `secretName`/`secretKey` pulled from a Vault dynamic secret, plus downward-API fields like
+  `NODE_NAME`), Vault `dynamicSecrets`, and `ingress.hosts` (host, `tlsSecretName` from a
+  `certificate/*.yaml`, path prefix).
 
 **Adding a new component follows the existing shape**: drop a Helm chart under
 `common/<name>/install/{helm.yaml,values.yaml}`, a Kustomize overlay under
 `common/<name>/install/kustomization.yaml`, or a plain manifest under `common/<name>/*.yaml` —
 no new ArgoCD Application needs to be hand-written, the matching ApplicationSet generator picks
-it up from git automatically. Same for a new certificate: add a file under `certificate/`.
+it up from git automatically. Same for a new certificate: add a file under `certificate/`. Same
+for a new app service: add `service/<project>/<service>/values.yaml` — no new chart, no new
+Application.
 
 ## Cert issuance chain
 
@@ -54,10 +66,7 @@ defines a `ClusterIssuer` (`vault-issuer`) that talks to Vault over Kubernetes a
 `certificate/*.yaml` references `issuerRef: vault-issuer` and produces a `<name>-cert-tls`
 secret consumed by the matching `common/<component>/ingress.yaml`.
 
-`common/vault/k.txt` holds the Vault unseal key, root token, and the one-time `vault operator
-init`/PKI/auth setup commands for this cluster — it's manual bootstrap documentation, not
-applied by ArgoCD, and is gitignored (`*.txt`) so it never gets committed. Don't add secrets to
-tracked files.
+Don't add secrets to tracked files.
 
 ## Working conventions
 
