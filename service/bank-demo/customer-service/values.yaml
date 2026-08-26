@@ -17,6 +17,8 @@ vault:
     path: static-creds/bank-demo-customer-service
 
 env:
+- name: NODE_NAME
+  fieldPath: spec.nodeName
 - name: POSTGRES_HOST
   value: postgres-postgresql.postgres.svc:5432
 - name: POSTGRES_DB
