@@ -1,0 +1,24 @@
+grafana:
+  admin:
+    existingSecret: prometheous-grafana-grafana-admin
+    userKey: admin_password
+    passwordKey: admin_password
+  persistence:
+    enabled: true
+    storageClassName: local-path
+    size: 5Gi
+
+prometheus:
+  prometheusSpec:
+    retention: 1d
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 5Gi
+
+alertmanager:
+  enabled: false
