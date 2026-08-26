@@ -3,10 +3,12 @@ kind: PodMonitor
 metadata:
   name: otel-collector-podmonitor
   namespace: monitoring
+  labels:
+    release: prometheous-grafana
 spec:
+  podMetricsEndpoints:
+  - port: prometheus
   selector:
     matchLabels:
-      app.kubernetes.io/name: opentelemetry-collector
       app.kubernetes.io/instance: otel-collector
-  podMetricsEndpoints:
-    - port: prometheus
+      app.kubernetes.io/name: opentelemetry-collector
