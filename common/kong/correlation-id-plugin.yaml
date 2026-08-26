@@ -1,0 +1,11 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongClusterPlugin
+metadata:
+  name: correlation-id
+  labels:
+    global: "true"
+plugin: correlation-id
+config:
+  header_name: X-Trace-Id
+  generator: uuid
+  echo_downstream: true
