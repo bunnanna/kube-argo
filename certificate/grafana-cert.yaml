@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: grafana-cert
+  namespace: monitoring
+spec:
+  secretName: grafana-cert-tls
+  issuerRef:
+    name: vault-issuer
+    kind: ClusterIssuer
+  commonName: grafana.bunnana.dev
+  dnsNames:
+  - grafana.bunnana.dev
