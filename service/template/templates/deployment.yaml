@@ -25,6 +25,10 @@ spec:
             - name: {{ .name }}
               {{- if hasKey . "value" }}
               value: {{ .value | quote }}
+              {{- else if hasKey . "fieldPath" }}
+              valueFrom:
+                fieldRef:
+                  fieldPath: {{ .fieldPath }}
               {{- else }}
               valueFrom:
                 secretKeyRef:
