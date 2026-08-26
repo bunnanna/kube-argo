@@ -5,6 +5,8 @@ image:
 
 config:
   receivers:
+    jaeger: null
+    zipkin: null
     otlp:
       protocols:
         grpc:
