@@ -1,7 +1,7 @@
 grafana:
   admin:
     existingSecret: prometheous-grafana-grafana-admin
-    userKey: admin_password
+    userKey: admin_user
     passwordKey: admin_password
   persistence:
     enabled: true
