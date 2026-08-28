@@ -18,7 +18,7 @@ vault:
 
 env:
 - name: MANAGEMENT_OTLP_TRACING_ENDPOINT
-  value: http://otel-collector-opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces
+  value: http://otel-collector-opentelemetry-collector.monitoring.svc.cluster.local:4317
 - name: MANAGEMENT_TRACING_SAMPLING_PROBABILITY
   value: "1.0"
 - name: POSTGRES_HOST
