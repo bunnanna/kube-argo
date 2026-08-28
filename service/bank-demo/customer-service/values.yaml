@@ -21,6 +21,10 @@ env:
   value: http://otel-collector-opentelemetry-collector.monitoring.svc.cluster.local:4317
 - name: MANAGEMENT_TRACING_SAMPLING_PROBABILITY
   value: "1.0"
+- name: LOGGING_LEVEL_IO_OPENTELEMETRY
+  value: DEBUG
+- name: DEBUG
+  value: "true"
 - name: POSTGRES_HOST
   value: postgres-postgresql.postgres.svc:5432
 - name: POSTGRES_DB
