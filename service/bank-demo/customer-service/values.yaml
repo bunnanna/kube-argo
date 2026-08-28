@@ -7,7 +7,7 @@ port: 8080
 
 image:
   repository: bunnana/bank-demo/customer-service
-  tag: "0.0.6-9"
+  tag: "0.0.7-1"
   pullPolicy: Never
 
 vault:
