@@ -10,6 +10,14 @@ image:
   tag: "latest"
   pullPolicy: IfNotPresent
 
+# Spring Cloud Config env vars, injected when enabled. Points at the
+# config-service ConfigServer; profile is required (no default).
+java:
+  spring:
+    enabled: false
+    # profile: "prod"
+    # configUri: "http://config-service.configuration.svc:8888"   # default shown
+
 vault:
   # Database/mongo/etc engine credentials (static-creds or true dynamic creds).
   # Each becomes one VaultDynamicSecret + one k8s Secret named <fullname>-<name>,

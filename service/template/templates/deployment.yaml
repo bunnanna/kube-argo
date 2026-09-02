@@ -30,6 +30,16 @@ spec:
               value: {{ .Values.service | quote }}
             - name: POD_NAMESPACE
               value: {{ .Values.namespace | quote }}
+          {{- if (((.Values.java).spring).enabled) }}
+            - name: SPRING_PROFILES_ACTIVE
+              value: {{ .Values.java.spring.profile | quote }}
+            - name: SPRING_APPLICATION_NAME
+              value: {{ .Values.service | quote }}
+            - name: SPRING_CLOUD_CONFIG_NAME
+              value: {{ printf "%s,%s" .Values.project .Values.service | quote }}
+            - name: SPRING_CLOUD_CONFIG_URI
+              value: {{ .Values.java.spring.configUri | default "http://config-service.configuration.svc:8888" | quote }}
+          {{- end }}
           {{- range .Values.env }}
             - name: {{ .name }}
               {{- if hasKey . "value" }}
