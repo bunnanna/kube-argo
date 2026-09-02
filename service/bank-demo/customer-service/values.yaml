@@ -7,12 +7,13 @@ port: 8080
 
 image:
   repository: bunnana/bank-demo/customer-service
-  tag: "0.0.7-4"
+  tag: "0.0.7-5"
   pullPolicy: Never
 
 java:
   spring:
     enabled: true
+    profile: default
 
 vault:
   dynamicSecrets:
@@ -21,7 +22,7 @@ vault:
     path: static-creds/bank-demo-customer-service
 
 env:
-- name: POSTGRES_USER
+- name: POSTGRES_USERNAME
   secretName: db-creds
   secretKey: username
 - name: POSTGRES_PASSWORD
