@@ -11,7 +11,7 @@
 {{- end -}}
 
 {{- define "service.otelAgentPath" -}}
-{{ .Values.otel.mountPath }}/{{ .Values.otel.agentJar }}
+{{ .Values.otel.agentPath }}
 {{- end -}}
 
 {{- define "service.otelConfigPath" -}}

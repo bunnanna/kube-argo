@@ -19,16 +19,13 @@ spec:
       initContainers:
         - name: otel-config
           image: {{ .Values.otel.curlImage }}
-          securityContext:
-            runAsUser: 0
           command:
             - sh
             - -c
             - curl -fsSL {{ .Values.otel.configUrl }} -o {{ include "service.otelConfigPath" . }}
           volumeMounts:
             - name: {{ .Values.otel.volumeName }}
-              mountPath: {{ include "service.otelConfigPath" . }}
-              subPath: {{ .Values.otel.configFile }}
+              mountPath: {{ .Values.otel.mountPath }}
       {{- end }}
       containers:
         - name: {{ include "service.name" . }}
@@ -39,8 +36,7 @@ spec:
           {{- if .Values.otel.enabled }}
           volumeMounts:
             - name: {{ .Values.otel.volumeName }}
-              mountPath: {{ include "service.otelConfigPath" . }}
-              subPath: {{ .Values.otel.configFile }}
+              mountPath: {{ .Values.otel.mountPath }}
           {{- end }}
           env:
             - name: NODE_NAME
@@ -63,7 +59,7 @@ spec:
             {{- if $.Values.otel.enabled }}
             - name: JAVA_TOOL_OPTIONS
               value: "-javaagent:{{ include "service.otelAgentPath" $ }}"
-            - name: OTEL_JAVAAGENT_CONFIGURATION_FILE
+            - name: OTEL_EXPERIMENTAL_CONFIG_FILE
               value: {{ include "service.otelConfigPath" $ | quote }}
             {{- end }}
           {{- end }}

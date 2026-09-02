@@ -60,18 +60,19 @@ env: []
 #   secretName: db-creds
 #   secretKey: password
 
-# OpenTelemetry: java agent jar baked into the app image under mountPath.
-# Collector config is fetched by an init container into an emptyDir, mounted
-# as a single file (subPath) at mountPath/configFile so it doesn't shadow the
-# rest of that image dir (i.e. the jar).
+# OpenTelemetry: java agent jar baked into the app image at agentPath.
+# Collector config is fetched by an init container into an emptyDir mounted
+# at mountPath - kept separate from the jar's dir because a dir-mount there
+# would wipe the image's baked-in jar (and subPath single-file mounts don't
+# work reliably on this cluster).
 otel:
   enabled: false
   configUrl: "http://config-service.configuration.svc:8888/open-telemetry-default.yaml"
   curlImage: "curlimages/curl:8.11.1"
   volumeName: otel-config
-  mountPath: /otel
+  mountPath: /otel-config
   configFile: otel-config.yaml
-  agentJar: opentelemetry-javaagent.jar
+  agentPath: /otel/opentelemetry-javaagent.jar
 
 ingress:
   enabled: false
