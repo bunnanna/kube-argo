@@ -1,0 +1,11 @@
+project: configuration
+service: config-service
+namespace: configuration
+
+replicas: 1
+port: 8888
+
+image:
+  repository: bunnana/config-service
+  tag: "0.0.1"
+  pullPolicy: Never
