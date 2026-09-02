@@ -17,14 +17,6 @@ vault:
     path: static-creds/bank-demo-customer-service
 
 env:
-- name: MANAGEMENT_OTLP_TRACING_ENDPOINT
-  value: http://otel-collector-opentelemetry-collector.monitoring.svc:4317
-- name: MANAGEMENT_TRACING_SAMPLING_PROBABILITY
-  value: "1.0"
-- name: LOGGING_LEVEL_IO_OPENTELEMETRY
-  value: DEBUG
-- name: DEBUG
-  value: "true"
 - name: POSTGRES_HOST
   value: postgres-postgresql.postgres.svc:5432
 - name: POSTGRES_DB
@@ -41,10 +33,6 @@ env:
   value: http://vault.vault.svc:8200
 - name: VAULT_KUBERNETES_ROLE
   value: bank-demo-customer-service-vso
-- name: NODE_NAME
-  fieldPath: spec.nodeName
-- name: POD_NAMESPACE
-  fieldPath: metadata.namespace
 
 ingress:
   enabled: true
