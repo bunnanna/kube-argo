@@ -9,3 +9,11 @@
 {{- define "service.springConfigName" -}}
 {{ .Values.project }},{{ .Values.service }}
 {{- end -}}
+
+{{- define "service.otelAgentPath" -}}
+{{ .Values.otel.mountPath }}/{{ .Values.otel.agentJar }}
+{{- end -}}
+
+{{- define "service.otelConfigPath" -}}
+{{ .Values.otel.mountPath }}/{{ .Values.otel.configFile }}
+{{- end -}}

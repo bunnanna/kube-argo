@@ -19,13 +19,16 @@ spec:
       initContainers:
         - name: otel-config
           image: {{ .Values.otel.curlImage }}
+          securityContext:
+            runAsUser: 0
           command:
             - sh
             - -c
-            - curl -fsSL {{ .Values.otel.configUrl }} -o {{ .Values.otel.mountPath }}/{{ .Values.otel.configFile }}
+            - curl -fsSL {{ .Values.otel.configUrl }} -o {{ include "service.otelConfigPath" . }}
           volumeMounts:
             - name: {{ .Values.otel.volumeName }}
-              mountPath: {{ .Values.otel.mountPath }}
+              mountPath: {{ include "service.otelConfigPath" . }}
+              subPath: {{ .Values.otel.configFile }}
       {{- end }}
       containers:
         - name: {{ include "service.name" . }}
@@ -36,7 +39,8 @@ spec:
           {{- if .Values.otel.enabled }}
           volumeMounts:
             - name: {{ .Values.otel.volumeName }}
-              mountPath: {{ .Values.otel.mountPath }}
+              mountPath: {{ include "service.otelConfigPath" . }}
+              subPath: {{ .Values.otel.configFile }}
           {{- end }}
           env:
             - name: NODE_NAME
@@ -56,6 +60,12 @@ spec:
               value: {{ include "service.springConfigName" . | quote }}
             - name: SPRING_CLOUD_CONFIG_URI
               value: {{ .Values.java.spring.configUri | quote }}
+            {{- if $.Values.otel.enabled }}
+            - name: JAVA_TOOL_OPTIONS
+              value: "-javaagent:{{ include "service.otelAgentPath" $ }}"
+            - name: OTEL_JAVAAGENT_CONFIGURATION_FILE
+              value: {{ include "service.otelConfigPath" $ | quote }}
+            {{- end }}
           {{- end }}
           {{- range .Values.env }}
             - name: {{ .name }}
