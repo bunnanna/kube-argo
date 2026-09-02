@@ -4,6 +4,7 @@ namespace: ""
 
 replicas: 1
 port: 8080
+revisionHistoryLimit: 2
 
 image:
   repository: ""
@@ -16,7 +17,7 @@ java:
   spring:
     enabled: false
     # profile: "prod"
-    # configUri: "http://config-service.configuration.svc:8888"   # default shown
+    configUri: "http://config-service.configuration.svc:8888"
 
 vault:
   # Database/mongo/etc engine credentials (static-creds or true dynamic creds).
@@ -58,6 +59,16 @@ env: []
 # - name: POSTGRES_PASSWORD
 #   secretName: db-creds
 #   secretKey: password
+
+# OpenTelemetry Collector config, fetched by an init container into an
+# emptyDir mounted at /otel on the main container.
+otel:
+  enabled: false
+  configUrl: "http://config-service.configuration.svc:8888/open-telemetry-default.yaml"
+  curlImage: "curlimages/curl:8.11.1"
+  volumeName: otel-config
+  mountPath: /otel
+  configFile: otel-config.yaml
 
 ingress:
   enabled: false

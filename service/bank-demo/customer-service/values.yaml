@@ -15,6 +15,10 @@ java:
     enabled: true
     profile: default
 
+otel:
+  enabled: true
+  configUrl: "http://config-service.configuration.svc:8888/open-telemetry-default.yaml"
+
 vault:
   dynamicSecrets:
   - name: db-creds

@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Values.namespace }}
 spec:
   replicas: {{ .Values.replicas }}
-  revisionHistoryLimit: 2
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
   selector:
     matchLabels:
       app: {{ include "service.name" . }}
@@ -15,12 +15,29 @@ spec:
         app: {{ include "service.name" . }}
     spec:
       serviceAccountName: {{ include "service.fullname" . }}-vso
+      {{- if .Values.otel.enabled }}
+      initContainers:
+        - name: otel-config
+          image: {{ .Values.otel.curlImage }}
+          command:
+            - sh
+            - -c
+            - curl -fsSL {{ .Values.otel.configUrl }} -o {{ .Values.otel.mountPath }}/{{ .Values.otel.configFile }}
+          volumeMounts:
+            - name: {{ .Values.otel.volumeName }}
+              mountPath: {{ .Values.otel.mountPath }}
+      {{- end }}
       containers:
         - name: {{ include "service.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.port }}
+          {{- if .Values.otel.enabled }}
+          volumeMounts:
+            - name: {{ .Values.otel.volumeName }}
+              mountPath: {{ .Values.otel.mountPath }}
+          {{- end }}
           env:
             - name: NODE_NAME
               valueFrom:
@@ -36,9 +53,9 @@ spec:
             - name: SPRING_APPLICATION_NAME
               value: {{ .Values.service | quote }}
             - name: SPRING_CLOUD_CONFIG_NAME
-              value: {{ printf "%s,%s" .Values.project .Values.service | quote }}
+              value: {{ include "service.springConfigName" . | quote }}
             - name: SPRING_CLOUD_CONFIG_URI
-              value: {{ .Values.java.spring.configUri | default "http://config-service.configuration.svc:8888" | quote }}
+              value: {{ .Values.java.spring.configUri | quote }}
           {{- end }}
           {{- range .Values.env }}
             - name: {{ .name }}
@@ -55,3 +72,8 @@ spec:
                   key: {{ .secretKey }}
               {{- end }}
           {{- end }}
+      {{- if .Values.otel.enabled }}
+      volumes:
+        - name: {{ .Values.otel.volumeName }}
+          emptyDir: {}
+      {{- end }}
