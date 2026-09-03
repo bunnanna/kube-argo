@@ -14,6 +14,8 @@ java:
   spring:
     enabled: true
     profile: default
+    cloudConfig:
+      enabled: false
 otel:
   enabled: true
   configUrl: "http://config-service.configuration.svc:8888/open-telemetry-default.yaml"

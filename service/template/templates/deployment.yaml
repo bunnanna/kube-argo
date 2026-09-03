@@ -52,10 +52,12 @@ spec:
               value: {{ .Values.java.spring.profile | quote }}
             - name: SPRING_APPLICATION_NAME
               value: {{ .Values.service | quote }}
+            {{- if (((.Values.java).spring).cloudConfig).enabled }}
             - name: SPRING_CLOUD_CONFIG_NAME
               value: {{ include "service.springConfigName" . | quote }}
             - name: SPRING_CLOUD_CONFIG_URI
-              value: {{ .Values.java.spring.configUri | quote }}
+              value: {{ .Values.java.spring.cloudConfig.uri | quote }}
+            {{- end }}
             {{- if $.Values.otel.enabled }}
             - name: JAVA_TOOL_OPTIONS
               value: "-javaagent:{{ include "service.otelAgentPath" $ }} -Dotel.config.file={{ include "service.otelConfigPath" $ }}"

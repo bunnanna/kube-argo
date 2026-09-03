@@ -11,13 +11,17 @@ image:
   tag: "latest"
   pullPolicy: IfNotPresent
 
-# Spring Cloud Config env vars, injected when enabled. Points at the
-# config-service ConfigServer; profile is required (no default).
+# enabled: SPRING_PROFILES_ACTIVE/SPRING_APPLICATION_NAME only (identifies
+# this as a Spring app). cloudConfig.enabled additionally pulls config from
+# the config-service ConfigServer (SPRING_CLOUD_CONFIG_NAME/URI) - turn off
+# for config-service itself to avoid it pulling config from itself.
 java:
   spring:
     enabled: false
     # profile: "prod"
-    configUri: "http://config-service.configuration.svc:8888"
+    cloudConfig:
+      enabled: true
+      uri: "http://config-service.configuration.svc:8888"
 
 vault:
   # Database/mongo/etc engine credentials (static-creds or true dynamic creds).
