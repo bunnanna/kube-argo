@@ -7,5 +7,13 @@ port: 8888
 
 image:
   repository: bunnana/config-service
-  tag: "0.0.1"
+  tag: "0.0.2"
   pullPolicy: Never
+
+java:
+  spring:
+    enabled: true
+    profile: default
+otel:
+  enabled: true
+  configUrl: "http://config-service.configuration.svc:8888/open-telemetry-default.yaml"
