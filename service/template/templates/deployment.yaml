@@ -58,9 +58,7 @@ spec:
               value: {{ .Values.java.spring.configUri | quote }}
             {{- if $.Values.otel.enabled }}
             - name: JAVA_TOOL_OPTIONS
-              value: "-javaagent:{{ include "service.otelAgentPath" $ }}"
-            - name: OTEL_EXPERIMENTAL_CONFIG_FILE
-              value: {{ include "service.otelConfigPath" $ | quote }}
+              value: "-javaagent:{{ include "service.otelAgentPath" $ }} -Dotel.config.file={{ include "service.otelConfigPath" $ }}"
             {{- end }}
           {{- end }}
           {{- range .Values.env }}
