@@ -26,6 +26,13 @@ config:
       tls:
         insecure: true
 
+  processors:
+    filter/healthcheck:
+      error_mode: ignore
+      traces:
+        span:
+          - attributes["db.statement"] == ""
+
   service:
     pipelines:
       metrics:
@@ -36,6 +43,7 @@ config:
         exporters: [otlphttp/loki]
       traces:
         receivers: [otlp]
+        processors: [filter/healthcheck]
         exporters: [otlp/tempo, debug]
 
 ports:
