@@ -20,5 +20,26 @@ server:
     enabled: false
   service:
     type: ClusterIP
+
+  extraEnvironmentVars:
+    VAULT_ADDR: "http://127.0.0.1:8200"
+
+  volumes:
+    - name: unseal-keys
+      secret:
+        secretName: vault-unseal-keys
+
+  volumeMounts:
+    - name: unseal-keys
+      mountPath: /vault/unseal
+      readOnly: true
+
+  postStart:
+    - sh
+    - -c
+    - |
+      sleep 5
+      vault operator unseal $(cat /vault/unseal/key1)
+
 injector:
   enabled: false
